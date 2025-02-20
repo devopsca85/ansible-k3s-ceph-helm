@@ -119,4 +119,13 @@ ansible/
 
 This structure gives each role its own clear home for tasks, variables, and handlers, while your single **`playbook.yml`** orchestrates how each role is applied to the environment.
     
- 
+## Expected Deliverables
+
+1. **An Ansible Playbook structured using roles.**
+   - 4 roles created `basics`,`ceph`,`helm`,`k3s`.
+2. **An Inventory File with variable configurations.**
+   - Inventory directory conatines `hosts.yml` which contains `IP`,`user`,`ssh password (from vault/hostpasswords.yml)`
+3. **A Vault File containing all sensitive information.**
+   - Sensitive information storedd in `vault/*` directory `host_password.yml` and `secrets.yml`
+   - `host_password.yml` contains ssh password in encrypted format
+   - `secrets.yml` contains k3s token and ceph admin password 
