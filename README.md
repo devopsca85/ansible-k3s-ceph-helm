@@ -110,7 +110,7 @@ ansible/
 3. **Run the Playbook**  
    - Execute:  
      ```bash
-     ansible-playbook -i inventory/hosts.yml playbook.yml
+     ansible-playbook -i inventory/hosts.yml playbook.yml --ask-vault-pass
      ```
 4. **Add More Roles or Tasks**  
    - If you need additional roles (for other services), create a new directory under `roles/`.
