@@ -1,0 +1,6 @@
+---
+- name: Restart Ceph Services
+  systemd:
+    name: ceph.target
+    state: restarted
+    enabled: yes

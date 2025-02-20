@@ -1,0 +1,6 @@
+---
+- name: Download Kubectl
+  get_url:
+    url: "{{ kubectl_download_url }}"
+    dest: "{{ kubectl_dest }}"
+    mode: '0755'

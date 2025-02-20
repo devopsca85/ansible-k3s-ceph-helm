@@ -1,0 +1,78 @@
+---
+- name: Install Ceph Packages
+  apt:
+    name:
+      - ceph
+      - ceph-common
+      - ceph-mds
+      - ceph-osd
+    state: present
+    update_cache: yes
+
+- name: Generate Ceph FSID
+  command: "uuidgen"
+  register: ceph_fsid
+  changed_when: false
+
+- name: Create Ceph Configuration Directory
+  file:
+    path: "/etc/ceph"
+    state: directory
+    mode: '0755'
+
+- name: Create Ceph Configuration File
+  copy:
+    dest: "/etc/ceph/ceph.conf"
+    content: |
+      [global]
+      fsid = {{ ceph_fsid.stdout }}
+      mon_initial_members = {{ ceph_monitor }}
+      mon_host = 127.0.0.1
+      auth_cluster_required = cephx
+      auth_service_required = cephx
+      auth_client_required = cephx
+
+- name: Restart Ceph Monitor Service
+  systemd:
+    name: "ceph-mon@{{ ceph_monitor }}"
+    state: restarted
+
+- name: Initialize Ceph Monitor
+  command: "ceph-mon --cluster {{ ceph_cluster_name }} --id {{ ceph_monitor }} --mkfs --fsid {{ ceph_fsid.stdout }}"
+  args:
+    creates: "/var/lib/ceph/mon/{{ ceph_cluster_name }}-{{ ceph_monitor }}"
+
+- name: Start Ceph Monitor
+  systemd:
+    name: "ceph-mon@{{ ceph_monitor }}"
+    enabled: yes
+    state: started
+
+- name: Initialize Ceph Manager
+  command: "ceph-mgr --cluster {{ ceph_cluster_name }} --id {{ ceph_monitor }}"
+  args:
+    creates: "/var/lib/ceph/mgr/{{ ceph_cluster_name }}-{{ ceph_monitor }}"
+
+- name: Start Ceph Manager
+  systemd:
+    name: "ceph-mgr@{{ ceph_monitor }}"
+    enabled: yes
+    state: started
+
+- name: Prepare OSD
+  command: "ceph-volume lvm create --bluestore --data {{ osd_device }}"
+  when: osd_device is defined
+
+- name: Create Ceph Storage Pool
+  command: "ceph osd pool create {{ ceph_pool_name }} 8 8"
+  register: ceph_pool_status
+  changed_when: "'created' in ceph_pool_status.stdout"
+
+- name: Verify Ceph Status
+  command: "ceph -s"
+  register: ceph_status
+  changed_when: false
+
+- name: Display Ceph Status
+  debug:
+    msg: "{{ ceph_status.stdout_lines }}"

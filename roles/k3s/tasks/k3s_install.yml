@@ -1,0 +1,9 @@
+---
+- name: Download & Install K3s
+  shell: "curl -sfL {{ k3s_install_script }} | sh -"
+
+- name: Ensure K3s Service is Running
+  systemd:
+    name: "{{ k3s_service }}"
+    enabled: yes
+    state: started

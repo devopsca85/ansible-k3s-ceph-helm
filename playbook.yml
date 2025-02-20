@@ -1,0 +1,12 @@
+---
+- name: Deploy Kubernetes (K3s) and Ceph
+  hosts: all
+  become: yes
+  vars_files:
+    - vault/secrets.yml
+    - vault/host_password.yml
+  roles:
+    - basics
+    - helm
+    - k3s
+    - ceph

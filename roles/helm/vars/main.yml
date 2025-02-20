@@ -1,0 +1,5 @@
+helm_src: "https://get.helm.sh/helm-v3.8.0-linux-amd64.tar.gz"
+helm_dest: "/tmp/helm.tar.gz"
+helm_extract_dest: "/tmp"
+helm_binary_src: "/tmp/linux-amd64/helm"
+helm_binary_dest: "/usr/bin/helm"

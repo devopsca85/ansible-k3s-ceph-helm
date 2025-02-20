@@ -1,0 +1,10 @@
+ceph_packages:
+  - ceph
+  - ceph-common
+  - ceph-mgr
+
+ceph_cluster_name: "ceph-test"
+ceph_monitor: "mon1"
+ceph_pool_name: "testpool"
+ceph_osd_device: "/dev/sda"  # Adjust this based on available storage
+ceph_dashboard_password: "MyStrongPass123"
